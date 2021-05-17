@@ -36,13 +36,15 @@ namespace Sample
 
         public void RunSimpleExample()
         {
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine(string.Format("{0}Simple Person Example:{1}", Environment.NewLine, Environment.NewLine));
-            Console.WriteLine(string.Format("Direct Serializing: {0}", JsonConvert.SerializeObject(SimplePerson)));
-            // Console.WriteLine(string.Format("Applying the Flattener : {0}", new MaskedType<Person_NotMasked>(NotMaskedPerson).Serialize()));
+            Console.WriteLine(string.Format("Direct Serializing:{0}{1}", Environment.NewLine, JsonConvert.SerializeObject(SimplePerson)));
+            Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Flatterner.Flatterner.Instance.Flattern(SimplePerson)));
 
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(string.Format("{0}Complex Person Example:{1}", Environment.NewLine, Environment.NewLine));
-            Console.WriteLine(string.Format("Direct Serializing: {0}", JsonConvert.SerializeObject(ComplexPerson)));
-            //Console.WriteLine(string.Format("Applying the Mask : {0}", new MaskedType<Person_Masked>(MaskedPerson).Serialize()));   
+            Console.WriteLine(string.Format("Direct Serializing:{0}{1}", Environment.NewLine, JsonConvert.SerializeObject(ComplexPerson)));
+            Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Flatterner.Flatterner.Instance.Flattern(ComplexPerson)));
         }
 
     }
