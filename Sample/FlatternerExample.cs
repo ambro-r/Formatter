@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Flatterner.Exceptions;
+using Newtonsoft.Json;
 using Sample.Models;
 using System;
 
@@ -9,6 +10,7 @@ namespace Sample
     {
         private SimplePerson SimplePerson;
         private ComplexPerson ComplexPerson;
+        private DuplicateOffset DuplicateOffset;
 
         public FlatternerExample()
         {
@@ -32,6 +34,12 @@ namespace Sample
                     MobileNumber = "+88-123-1234"
                 }
             };
+
+            DuplicateOffset = new DuplicateOffset()
+            {
+                Offset01 = "Not Important",
+                Offset02 = "Also Not Important",
+            };
         }
 
         public void RunSimpleExample()
@@ -45,6 +53,18 @@ namespace Sample
             Console.WriteLine(string.Format("{0}Complex Person Example:{1}", Environment.NewLine, Environment.NewLine));
             Console.WriteLine(string.Format("Direct Serializing:{0}{1}", Environment.NewLine, JsonConvert.SerializeObject(ComplexPerson)));
             Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Flatterner.Flatterner.Instance.Flattern(ComplexPerson)));
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            try
+            {
+                Console.WriteLine(string.Format("{0}Duplicate Offset Example:{1}", Environment.NewLine, Environment.NewLine));
+                Console.WriteLine(string.Format("Direct Serializing:{0}{1}", Environment.NewLine, JsonConvert.SerializeObject(DuplicateOffset)));
+                Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Flatterner.Flatterner.Instance.Flattern(DuplicateOffset)));
+            } catch (FlatternerException fe)
+            {
+                Console.WriteLine(string.Format("Exception:{0}{1}", Environment.NewLine, fe.Message));
+            }
+
         }
 
     }

@@ -3,7 +3,7 @@ using Flattener.Constants;
 
 namespace Sample.Models
 {
-    [Flatten]
+    [Flatten(FromZero = false)]
     public class SimplePerson
     {
 
