@@ -11,12 +11,12 @@ namespace Sample.Models
 
     }
 
-    [Flatten(FromZero = true)]
+    [Flatten(FromZero = true, Line = 2)]
     public class ContactDetails
     {
-        [Flat(Offset = 1, Length = 25)]
+        [Flat(Offset = 0, Length = 25)]
         public string Email { get; set; }
-        [Flat(Offset = 26, Length = 15, Justified = Justified.RIGHT)]
+        [Flat(Offset = 25, Length = 15, Justified = Justified.RIGHT)]
         public string MobileNumber { get; set; }
 
     }

@@ -8,6 +8,8 @@ namespace Flattener.Attributes
     {
         public bool FromZero { get; set; } = false;
 
+        public int Line { get; set; } = 1;
+
     }
 
 }
