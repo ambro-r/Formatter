@@ -8,11 +8,11 @@ using System.Text;
 
 namespace Flatterner
 {
-    public class Flattener
+    public class Formatter
     {
-        private Flattener() { }
+        private Formatter() { }
 
-        public static Flattener Instance { get; } = new Flattener();
+        public static Formatter Instance { get; } = new Formatter();
 
         public string Flatten<T>(T objectToFlatten)
         {
@@ -33,7 +33,7 @@ namespace Flatterner
         private void FlattenObject<T>(T objectToFlatten, ref SortedDictionary<int, string> lines)
         {            
             Type type = objectToFlatten.GetType();
-            Flatten flatten = (Flatten)type.GetCustomAttribute(typeof(Flatten));
+            Formatted flatten = (Formatted)type.GetCustomAttribute(typeof(Formatted));
             if (flatten != null)
             {
                 if (!ContainsLine(ref lines, flatten.Line))
@@ -42,19 +42,19 @@ namespace Flatterner
                     PropertyInfo[] properties = type.GetProperties();
                     foreach (PropertyInfo property in properties)
                     {
-                        if (property.PropertyType.GetCustomAttribute(typeof(Flatten)) != null)
+                        if (property.PropertyType.GetCustomAttribute(typeof(Formatted)) != null)
                         {
                             FlattenObject(property.GetValue(objectToFlatten), ref lines);
                         }
                         else
                         {
-                            Flat flat = (Flat)property.GetCustomAttribute(typeof(Flat), false);
+                            Format flat = (Format)property.GetCustomAttribute(typeof(Format), false);
                             if (flat != null)
                             {
                                 string formattedString = FormatString(property.GetValue(objectToFlatten).ToString(), flat);
                                 if (sortedStrings.ContainsKey(flat.Offset))
                                 {
-                                    throw new FlattenerException(string.Format("Offest {0} already defined, duplicate offests not allowed.", flat.Offset));
+                                    throw new Exceptions.FormatException(string.Format("Offest {0} already defined, duplicate offests not allowed.", flat.Offset));
                                 }
                                 else
                                 {
@@ -71,11 +71,11 @@ namespace Flatterner
                         int offsetAdjustment = flatten.FromZero ? 0 : 1;
                         if ((entry.Key - offsetAdjustment) > flatString.Length)
                         {
-                            throw new FlattenerException(string.Format("Next offest expected at {0}, but {1} specified.", flatString.Length, (entry.Key - offsetAdjustment)));
+                            throw new Exceptions.FormatException(string.Format("Next offest expected at {0}, but {1} specified.", flatString.Length, (entry.Key - offsetAdjustment)));
                         }
                         else if ((entry.Key - offsetAdjustment) < flatString.Length)
                         {
-                            throw new FlattenerException(string.Format("Offest {0} specified, but {1} expected.", (entry.Key - offsetAdjustment), flatString.Length));
+                            throw new Exceptions.FormatException(string.Format("Offest {0} specified, but {1} expected.", (entry.Key - offsetAdjustment), flatString.Length));
                         }
                         else
                         {
@@ -95,12 +95,12 @@ namespace Flatterner
         {
             if (lines.ContainsKey(line))
             {
-                throw new FlattenerException(string.Format("Line {0} already defined, duplicate lines not allowed.", line));
+                throw new Exceptions.FormatException(string.Format("Line {0} already defined, duplicate lines not allowed.", line));
             }
             else return false;
         }
 
-        private string FormatString(string value, Flat flat)
+        private string FormatString(string value, Format flat)
         {
             string formattedString = string.Empty;
             if(value.Length < flat.Length)

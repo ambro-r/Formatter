@@ -4,7 +4,7 @@ namespace Flattener.Attributes
 {
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class Flatten : Attribute
+    public class Formatted : Attribute
     {
         public bool FromZero { get; set; } = false;
 

@@ -3,7 +3,7 @@ using System;
 
 namespace Flattener.Attributes
 {
-    public class Flat : Attribute
+    public class Format : Attribute
     {
 
         public Justified Justified { get; set; } = Justified.LEFT;

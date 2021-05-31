@@ -4,8 +4,11 @@
     {
         private static void Main(string[] args)
         {
-            FlattenerExample flattenerExample = new FlattenerExample();
-            flattenerExample.RunSimpleExample();
+            ObjectToStringExample objectToStringExample = new ObjectToStringExample();
+            objectToStringExample.RunExample();
+
+            StringToObjectExample stringToObjectExample = new StringToObjectExample();
+            stringToObjectExample.RunExample();
         }
     }
 }

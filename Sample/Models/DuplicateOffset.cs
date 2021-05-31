@@ -6,13 +6,13 @@ using System.Text;
 
 namespace Sample.Models
 {
-    [Flatten]
+    [Formatted]
     public class DuplicateOffset
     {
 
-        [Flat(Offset = 1, Length = 25)]
+        [Format(Offset = 1, Length = 25)]
         public string Offset01 { get; set; }
-        [Flat(Offset = 1, Length = 15, Justified = Justified.RIGHT)]
+        [Format(Offset = 1, Length = 15, Justified = Justified.RIGHT)]
         public string Offset02 { get; set; }
     }
 }

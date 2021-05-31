@@ -5,12 +5,12 @@ using System.Text;
 namespace Flatterner.Exceptions
 {
     [Serializable]
-    public class FlattenerException : Exception
+    public class FormatException : Exception
     {
-        private FlattenerException()
+        private FormatException()
         {
         }
 
-        public FlattenerException(string message) : base(message) { }
+        public FormatException(string message) : base(message) { }
     }
 }

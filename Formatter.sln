@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample", "Sample\Sample.csproj", "{5D5A3E47-07CD-49A1-90F9-42A6A93E840D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flattener", "Flatterner\Flattener.csproj", "{BDCA300F-AAC5-4A12-941C-6325CCA26A5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Formatter", "Flatterner\Formatter.csproj", "{BDCA300F-AAC5-4A12-941C-6325CCA26A5E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

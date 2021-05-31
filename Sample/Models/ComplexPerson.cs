@@ -3,7 +3,7 @@ using Flattener.Constants;
 
 namespace Sample.Models
 {
-    [Flatten(FromZero = false)]
+    [Formatted(FromZero = false)]
     public class ComplexPerson : SimplePerson
     {
 
@@ -11,12 +11,12 @@ namespace Sample.Models
 
     }
 
-    [Flatten(FromZero = true, Line = 2)]
+    [Formatted(FromZero = true, Line = 2)]
     public class ContactDetails
     {
-        [Flat(Offset = 0, Length = 25)]
+        [Format(Offset = 0, Length = 25)]
         public string Email { get; set; }
-        [Flat(Offset = 25, Length = 15, Justified = Justified.RIGHT)]
+        [Format(Offset = 25, Length = 15, Justified = Justified.RIGHT)]
         public string MobileNumber { get; set; }
 
     }

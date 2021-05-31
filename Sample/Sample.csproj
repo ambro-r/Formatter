@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Flatterner\Flattener.csproj" />
+    <ProjectReference Include="..\Flatterner\Formatter.csproj" />
   </ItemGroup>
 
 </Project>
