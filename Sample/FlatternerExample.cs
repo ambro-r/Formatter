@@ -11,6 +11,7 @@ namespace Sample
         private SimplePerson SimplePerson;
         private ComplexPerson ComplexPerson;
         private DuplicateOffset DuplicateOffset;
+        private IncorrectLines IncorrectLines;
 
         public FlatternerExample()
         {
@@ -40,6 +41,15 @@ namespace Sample
                 Offset01 = "Not Important",
                 Offset02 = "Also Not Important",
             };
+
+            IncorrectLines = new IncorrectLines()
+            {
+                Offset01 = "Not Important",
+                Line02 = new Line02()
+                {
+                    Offset01 = "Also Not Important"
+                }
+            };
         }
 
         public void RunSimpleExample()
@@ -61,6 +71,18 @@ namespace Sample
                 Console.WriteLine(string.Format("Direct Serializing:{0}{1}", Environment.NewLine, JsonConvert.SerializeObject(DuplicateOffset)));
                 Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Flatterner.Flatterner.Instance.Flatten(DuplicateOffset)));
             } catch (FlatternerException fe)
+            {
+                Console.WriteLine(string.Format("Exception:{0}{1}", Environment.NewLine, fe.Message));
+            }
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            try
+            {
+                Console.WriteLine(string.Format("{0}Incorrect Lines Example:{1}", Environment.NewLine, Environment.NewLine));
+                Console.WriteLine(string.Format("Direct Serializing:{0}{1}", Environment.NewLine, JsonConvert.SerializeObject(IncorrectLines)));
+                Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Flatterner.Flatterner.Instance.Flatten(IncorrectLines)));
+            }
+            catch (FlatternerException fe)
             {
                 Console.WriteLine(string.Format("Exception:{0}{1}", Environment.NewLine, fe.Message));
             }

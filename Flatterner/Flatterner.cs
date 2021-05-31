@@ -36,11 +36,7 @@ namespace Flatterner
             Flatten flatten = (Flatten)type.GetCustomAttribute(typeof(Flatten));
             if (flatten != null)
             {
-                if (lines.ContainsKey(flatten.Line))
-                {
-                    throw new FlatternerException(string.Format("Line {0} already defined, duplicate lines not allowed.", flatten.Line));
-                }
-                else
+                if (!ContainsLine(ref lines, flatten.Line))
                 {
                     SortedDictionary<int, string> sortedStrings = new SortedDictionary<int, string>();
                     PropertyInfo[] properties = type.GetProperties();
@@ -86,9 +82,22 @@ namespace Flatterner
                             flatString = flatString + entry.Value;
                         }
                     }
-                    lines.Add(flatten.Line, flatString);
+
+                    if (!ContainsLine(ref lines, flatten.Line))
+                    {
+                        lines.Add(flatten.Line, flatString);
+                    }
                 }
             }
+        }
+
+        private bool ContainsLine(ref SortedDictionary<int, string> lines, int line)
+        {
+            if (lines.ContainsKey(line))
+            {
+                throw new FlatternerException(string.Format("Line {0} already defined, duplicate lines not allowed.", line));
+            }
+            else return false;
         }
 
         private string FormatString(string value, Flat flat)
