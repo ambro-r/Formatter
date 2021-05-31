@@ -8,11 +8,11 @@ using System.Text;
 
 namespace Flatterner
 {
-    public class Flatterner
+    public class Flattener
     {
-        private Flatterner() { }
+        private Flattener() { }
 
-        public static Flatterner Instance { get; } = new Flatterner();
+        public static Flattener Instance { get; } = new Flattener();
 
         public string Flatten<T>(T objectToFlatten)
         {
@@ -54,7 +54,7 @@ namespace Flatterner
                                 string formattedString = FormatString(property.GetValue(objectToFlatten).ToString(), flat);
                                 if (sortedStrings.ContainsKey(flat.Offset))
                                 {
-                                    throw new FlatternerException(string.Format("Offest {0} already defined, duplicate offests not allowed.", flat.Offset));
+                                    throw new FlattenerException(string.Format("Offest {0} already defined, duplicate offests not allowed.", flat.Offset));
                                 }
                                 else
                                 {
@@ -71,11 +71,11 @@ namespace Flatterner
                         int offsetAdjustment = flatten.FromZero ? 0 : 1;
                         if ((entry.Key - offsetAdjustment) > flatString.Length)
                         {
-                            throw new FlatternerException(string.Format("Next offest expected at {0}, but {1} specified.", flatString.Length, (entry.Key - offsetAdjustment)));
+                            throw new FlattenerException(string.Format("Next offest expected at {0}, but {1} specified.", flatString.Length, (entry.Key - offsetAdjustment)));
                         }
                         else if ((entry.Key - offsetAdjustment) < flatString.Length)
                         {
-                            throw new FlatternerException(string.Format("Offest {0} specified, but {1} expected.", (entry.Key - offsetAdjustment), flatString.Length));
+                            throw new FlattenerException(string.Format("Offest {0} specified, but {1} expected.", (entry.Key - offsetAdjustment), flatString.Length));
                         }
                         else
                         {
@@ -95,7 +95,7 @@ namespace Flatterner
         {
             if (lines.ContainsKey(line))
             {
-                throw new FlatternerException(string.Format("Line {0} already defined, duplicate lines not allowed.", line));
+                throw new FlattenerException(string.Format("Line {0} already defined, duplicate lines not allowed.", line));
             }
             else return false;
         }
@@ -106,7 +106,7 @@ namespace Flatterner
             if(value.Length < flat.Length)
             {
                 char fill = flat.Fill.Length > 0 ? flat.Fill[0] : ' ';
-                if (flat.Justified == Flattener.Constants.Justified.RIGHT)
+                if (flat.Justified == global::Flattener.Constants.Justified.RIGHT)
                 {
                     formattedString = value.PadLeft(flat.Length, fill);
                 } else
@@ -115,7 +115,7 @@ namespace Flatterner
                 }                
             } else
             {
-                if (flat.Justified == Flattener.Constants.Justified.RIGHT)
+                if (flat.Justified == global::Flattener.Constants.Justified.RIGHT)
                 {
                     formattedString = value.Substring(value.Length - flat.Length);
                 }

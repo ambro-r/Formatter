@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Flatterner\Flatterner.csproj" />
+    <ProjectReference Include="..\Flatterner\Flattener.csproj" />
   </ItemGroup>
 
 </Project>

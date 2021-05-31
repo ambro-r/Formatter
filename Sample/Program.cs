@@ -4,7 +4,7 @@
     {
         private static void Main(string[] args)
         {
-            FlatternerExample flattenerExample = new FlatternerExample();
+            FlattenerExample flattenerExample = new FlattenerExample();
             flattenerExample.RunSimpleExample();
         }
     }
