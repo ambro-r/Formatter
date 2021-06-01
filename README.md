@@ -1,99 +1,99 @@
-# Masking
-A small library creates to add *masking* to instance variables when serializing an class to a string. This is especially useful in the following cases:
+# Formatter
+A small library to work with pre-formatted / fixed length strings. This is especially useful in the following cases:
 
-* When persisting information that may be deemed *sensitive*, but not critical for support / troubleshooting, to a log file. 
-* When we more interested  in the fact that a value was received, but persisting the value will just cause bloat (i.e. if we receive an image in base64 format). 
+* When submitting fixed length flat-files to legacy systems. 
+* When receiving a fixed length flat-file from a legacy syste
 
 **NOTE:** 
 
-* *Masking* is **not** reversable!
-* *Masking* is applied on serialization and DOES NOT change the value stored in the instance variable!
+* Currently on generation of the fixed length file is supported, reading a fixed-length into an object is not (to do) 
 
-### Supported Masking Methods:
 
-The following *masking methods* are supported:
+### Usage:
 
-#### Mask
+Any models that need to be formatted need the ``[Formatted]`` attribute specified. Individual fields within the class need to be attributed with the ``[Format]`` atribute. 
 
-Masks a string based on a specified regular expression pattern. 
+#### ``[Formatted]``:
 
-For example, the following implementation will replace all characters between the first 3 and last 3 values of a string, hence "12345678900987654321" will become "123XXXXXXXXXXXXXX321"
+The ``[Formatted]`` attribute supports the following parameters
+
+| Parameter | Description |
+| --- | ----------- |
+| **FromZero** | If the offset counts from Zero or One. If not specified, 1 is defaulted. |
+| **Line** | The line number (for multi-line formatting). If none is supplied, then 1 is defaulted. |
+
+
+#### ``[Format]``:
+
+The ``[Format]`` attribute supports the following parameters
+
+| Parameter | Description |
+| --- | ----------- |
+| **Offset** | The starting position. |
+| **Length** | The length of the string. |
+| **Fill** | What the string should be filled with. If not supplied a *space* is assumed. Note: If a string is specified, only the first character will be used. |
+| **Justified** | Left or Right text justification. If not supplied LEFT is defaulted. |
+
+
+#### Example (single line):
+
+Define a *Person* object with *Formatting*:
 ```csharp
-[Mask(MaskingMethod.Mask, @"(?<=.{3}).+(?=.{3})")]
-public string ContactNumber { get; set; }
-```		
-
-#### Replace
-
-Replaces a string with the specified string. 
-
-For example, the following implemenation will replace the entire string, hence "12345678900987654321" will become "REPLACED"
-```csharp
-[Mask(MaskingMethod.Replace, @"REPLACED")]
-public string ContactNumber { get; set; }
-```		
-
-#### Trim
-
-Trims a string based on a specified regular expression pattern. The characters "..." will be inserted to indicate the trimmed string.
-
-For example, the following implementation will trim all characters between the first 3 and last 3 values of a string, hence "12345678900987654321" will become "123...321"
-```csharp
-[Mask(MaskingMethod.Trim, @"(?<=.{3}).+(?=.{3})")]
-public string ContactNumber { get; set; }
-```		
-
-### Example:
-
-Define a *Person* object with *masks*:
-```csharp
-[Mask]
+[Formatted]
 public class Person
 {
+	[Format(Offset = 1, Length = 20, Justified = Justified.LEFT)]
 	public string Name { get; set; }
+
+	[Format(Offset = 21, Length = 20)]
 	public string Surname { get; set; }
 
-	[Mask(MaskingMethod.Mask, @"(?<=.{3}).+(?=.{3})")]
-	public string ContactNumber { get; set; }
-
-	[Mask(MaskingMethod.Mask, @"(?<=.{1}).+(?<=@)")]
-	public string Email { get; set; }
-			
-	[Mask(MaskingMethod.Trim, @"(?<=.{6}).+(?=.{6})")]
-	public string Address { get; set; }
-			
-	[Mask(MaskingMethod.Replace, @"REPLACED")]
+	[Format(Offset = 41, Length = 20, Justified = Justified.RIGHT, Fill = "0")]
 	public string IdentityNumber { get; set; }
+
+	public int Age { get; set; }			
 }
 ```	
-Now give it some values:
+
+This will produce something like this (depending on what you've values you've assigned), notice the "AGE" is not included as it was not attributed:
+```	
+John                Simple              000000000A123-SIMPLE
+```	
+#### Example (multi-Line):
+
+Define a *Person* object with *Formatting*:
 ```csharp
-Person MaskedPerson = new Person()
+[Formatted]
+public class Person
 {
-	Name = "John",
-	Surname = "Smith",
-	ContactNumber = "0991231234",
-	Email = "john.smith@testdomain.com",
-	Address = "59 Hornbill Avenue, South Crater, Mars, 000345",
-	IdentityNumber = "1234567890123"
-};
-```
+	[Format(Offset = 1, Length = 20, Justified = Justified.LEFT)]
+	public string Name { get; set; }
 
-**Direct Serializing:** 
+	[Format(Offset = 21, Length = 20)]
+	public string Surname { get; set; }
 
-```csharp
-JsonConvert.SerializeObject(MaskedPerson);
-```
-outputs:
-```json
-{"Name":"John","Surname":"Smith","ContactNumber":"0991231234","Email":"john.smith@testdomain.com","Address":"59 Hornbill Avenue, South Crater, Mars, 000345","IdentityNumber":"1234567890123"}
-```
+	[Format(Offset = 41, Length = 20, Justified = Justified.RIGHT, Fill = "0")]
+	public string IdentityNumber { get; set; }
 
-**Serializing when applying the Mask:**
-```csharp
-new MaskedType<Person>(MaskedPerson).Serialize();
-```
-outputs:
-```json
-{"Name":"John","Surname":"Smith","ContactNumber":"099XXXX234","Email":"jXXXXXXXXXXtestdomain.com","Address":"59 Hor...000345","IdentityNumber":"REPLACED"}
-```
+	public int Age { get; set; }	
+
+	public ContactDetails ContactDetails { get; set; }		
+}
+
+[Formatted(FromZero = true, Line = 3)]
+public class ContactDetails
+{
+	[Format(Offset = 0, Length = 25)]
+	public string Email { get; set; }
+	
+	[Format(Offset = 25, Length = 15, Justified = Justified.RIGHT)]
+	public string MobileNumber { get; set; }
+}
+```	
+
+This will produce something like this:
+```	
+John                Simple              000000000A123-SIMPLE
+
+my.email@simpleperson.com   +88-123-1234
+```	
