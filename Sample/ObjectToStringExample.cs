@@ -1,4 +1,4 @@
-﻿using Flatterner.Exceptions;
+﻿using Formatter.Exceptions;
 using Newtonsoft.Json;
 using Sample.Models;
 using System;
@@ -57,20 +57,20 @@ namespace Sample
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine(string.Format("{0}Simple Person Example:{1}", Environment.NewLine, Environment.NewLine));
             Console.WriteLine(string.Format("Direct Serializing:{0}{1}", Environment.NewLine, JsonConvert.SerializeObject(SimplePerson)));
-            Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Flatterner.Formatter.Instance.Flatten(SimplePerson)));
+            Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Formatter.Flattener.Instance.Flatten(SimplePerson)));
 
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(string.Format("{0}Complex Person Example:{1}", Environment.NewLine, Environment.NewLine));
             Console.WriteLine(string.Format("Direct Serializing:{0}{1}", Environment.NewLine, JsonConvert.SerializeObject(ComplexPerson)));
-            Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Flatterner.Formatter.Instance.Flatten(ComplexPerson)));
+            Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Formatter.Flattener.Instance.Flatten(ComplexPerson)));
 
             Console.ForegroundColor = ConsoleColor.Gray;
             try
             {
                 Console.WriteLine(string.Format("{0}Duplicate Offset Example:{1}", Environment.NewLine, Environment.NewLine));
                 Console.WriteLine(string.Format("Direct Serializing:{0}{1}", Environment.NewLine, JsonConvert.SerializeObject(DuplicateOffset)));
-                Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Flatterner.Formatter.Instance.Flatten(DuplicateOffset)));
-            } catch (Flatterner.Exceptions.FormatException fe)
+                Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Formatter.Flattener.Instance.Flatten(DuplicateOffset)));
+            } catch (Formatter.Exceptions.FlattenerException fe)
             {
                 Console.WriteLine(string.Format("Exception:{0}{1}", Environment.NewLine, fe.Message));
             }
@@ -80,9 +80,9 @@ namespace Sample
             {
                 Console.WriteLine(string.Format("{0}Incorrect Lines Example:{1}", Environment.NewLine, Environment.NewLine));
                 Console.WriteLine(string.Format("Direct Serializing:{0}{1}", Environment.NewLine, JsonConvert.SerializeObject(IncorrectLines)));
-                Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Flatterner.Formatter.Instance.Flatten(IncorrectLines)));
+                Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Formatter.Flattener.Instance.Flatten(IncorrectLines)));
             }
-            catch (Flatterner.Exceptions.FormatException fe)
+            catch (Formatter.Exceptions.FlattenerException fe)
             {
                 Console.WriteLine(string.Format("Exception:{0}{1}", Environment.NewLine, fe.Message));
             }
