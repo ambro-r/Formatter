@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Flattener.Attributes
+namespace Formatter.Attributes
 {
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]

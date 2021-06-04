@@ -1,10 +1,10 @@
-﻿using Flattener.Attributes;
-using Flattener.Constants;
+﻿using Formatter.Attributes;
+using Formatter.Constants;
 
 namespace Sample.Models
 {
     [Formatted(FromZero = false)]
-    public class SimplePerson
+    public class Person
     {
 
         [Format(Offset = 1, Length = 20, Justified = Justified.LEFT)]

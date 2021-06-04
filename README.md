@@ -20,7 +20,6 @@ The ``[Formatted]`` attribute supports the following parameters
 | Parameter | Description |
 | --- | ----------- |
 | **FromZero** | If the offset counts from Zero or One. If not specified, 1 is defaulted. |
-| **Line** | The line number (for multi-line formatting). If none is supplied, then 1 is defaulted. |
 
 
 #### ``[Format]``:
@@ -33,6 +32,8 @@ The ``[Format]`` attribute supports the following parameters
 | **Length** | The length of the string. |
 | **Fill** | What the string should be filled with. If not supplied a *space* is assumed. Note: If a string is specified, only the first character will be used. |
 | **Justified** | Left or Right text justification. If not supplied LEFT is defaulted. |
+| **Case** | Change the CASE (UPPER or lower). If not supplied case will not be changed. |
+| **Line** | The line number (for multi-line formatting). If none is supplied, then 1 is defaulted. |
 
 
 #### Example (single line):
@@ -42,7 +43,7 @@ Define a *Person* object with *Formatting*:
 [Formatted]
 public class Person
 {
-	[Format(Offset = 1, Length = 20, Justified = Justified.LEFT)]
+	[Format(Offset = 1, Length = 20, Justified = Justified.LEFT, Case = Case.UPPER)]
 	public string Name { get; set; }
 
 	[Format(Offset = 21, Length = 20)]
