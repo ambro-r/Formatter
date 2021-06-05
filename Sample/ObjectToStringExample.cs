@@ -1,5 +1,4 @@
-﻿using Formatter.Exceptions;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Sample.Models;
 using System;
 
@@ -30,7 +29,7 @@ namespace Sample
                 Age = 40,
                 ContactDetails = new ContactDetails()
                 {
-                    Email = "my.email@mydomain.com",                  
+                    Email = "my.email@mydomain.com",
                     AddressDetails = new AddressDetails()
                     {
                         Address = "My Address"
@@ -71,7 +70,8 @@ namespace Sample
                 Console.WriteLine(string.Format("{0}Duplicate Offset Example:{1}", Environment.NewLine, Environment.NewLine));
                 Console.WriteLine(string.Format("Direct Serializing:{0}{1}", Environment.NewLine, JsonConvert.SerializeObject(DuplicateOffset)));
                 Console.WriteLine(string.Format("Applying the Flattener:{0}{1}", Environment.NewLine, Formatter.Flattener.Instance.Flatten(DuplicateOffset)));
-            } catch (Formatter.Exceptions.FlattenerException fe)
+            }
+            catch (Formatter.Exceptions.FlattenerException fe)
             {
                 Console.WriteLine(string.Format("Exception: {0}", fe.Message));
             }

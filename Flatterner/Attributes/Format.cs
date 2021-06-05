@@ -11,12 +11,11 @@ namespace Formatter.Attributes
 
         public string Fill { get; set; } = string.Empty;
 
-        public int Offset { get; set; } 
+        public int Offset { get; set; } = 1;
 
         public int Length { get; set; }
 
         public int Line { get; set; } = 1;
-        
 
     }
 

@@ -1,12 +1,9 @@
 ﻿using Formatter.Attributes;
-using Formatter.Exceptions;
-using Formatter.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Formatter
 {
@@ -18,101 +15,66 @@ namespace Formatter
 
         public string Flatten<T>(T objectToFlatten)
         {
-            return GetFormattedString(GetSortedLines<T>(objectToFlatten));
+            return GetFlattenedString(GetSortedLines(objectToFlatten));
         }
 
-        private string GetFormattedString(SortedDictionary<int, Line> lines)
+        private string GetFlattenedString(SortedDictionary<int, string> lines)
         {
-            string returnString = string.Empty;
-            if (lines.Count > 0)
+            string flattenedString = string.Empty;
+            for (int i = 1; i <= lines.Keys.Max(); i++)
             {
-                for (int i = 1; i <= lines.Keys.Max(); i++)
-                {
-                    if (i > 1) returnString = returnString + Environment.NewLine;
-                    if (lines.ContainsKey(i))
-                    {
-                        string flatString = string.Empty;
-
-                        if (lines[i].SortedLines?.Count > 0)
-                        {
-                            flatString = GetFormattedString(lines[i].SortedLines);
-                        }
-                        else
-                        {
-                            foreach (KeyValuePair<int, string> entry in lines[i].SortedStrings)
-                            {
-                                int offsetAdjustment = lines[i].FromZero ? 0 : 1;
-                                if ((entry.Key - offsetAdjustment) > flatString.Length)
-                                {
-                                    throw new Exceptions.FlattenerException(string.Format("Next offest expected at {0}, but {1} specified.", flatString.Length, (entry.Key - offsetAdjustment)));
-                                }
-                                else if ((entry.Key - offsetAdjustment) < flatString.Length)
-                                {
-                                    throw new Exceptions.FlattenerException(string.Format("Offest {0} specified, but {1} expected.", (entry.Key - offsetAdjustment), flatString.Length));
-                                }
-                                else
-                                {
-                                    flatString = flatString + entry.Value;
-                                }
-                            }
-                        }
-                        returnString = returnString + flatString;
-                    }
-                }
+                if (i > 1) flattenedString = flattenedString + Environment.NewLine;
+                flattenedString = flattenedString + lines[i];
             }
-            return returnString;
+            return flattenedString;
         }
 
-        private SortedDictionary<int, Line> GetSortedLines<T>(T objectToFlatten)
+        private SortedDictionary<int, string> GetSortedLines<T>(T objectToFlatten)
         {
-            SortedDictionary<int, Line> lines = new SortedDictionary<int, Line>();
+            SortedDictionary<int, string> lines = new SortedDictionary<int, string>();
             Type type = objectToFlatten.GetType();
             Formatted flatten = (Formatted)type.GetCustomAttribute(typeof(Formatted));
+            int offsetAdjustment = flatten.FromZero ? 0 : 1;
             if (flatten != null)
-            {                
-                PropertyInfo[] properties = type.GetProperties();
+            {
+                IOrderedEnumerable<PropertyInfo> properties = type.GetProperties().Where(p => ((Format)p.GetCustomAttribute(typeof(Format), false))?.Line > 0).OrderBy(p => ((Format)p.GetCustomAttribute(typeof(Format), false))?.Line).ThenBy(p => ((Format)p.GetCustomAttribute(typeof(Format), false))?.Offset);
                 foreach (PropertyInfo property in properties)
                 {
                     Format flat = (Format)property.GetCustomAttribute(typeof(Format), false);
+                    if (!lines.ContainsKey(flat.Line)) lines.Add(flat.Line, string.Empty);
                     if (flat != null)
-                    {                        
-                        int lineNumber = flat.Line > 0 ? flat.Line : 1;
-
-                        if (!lines.ContainsKey(lineNumber))
-                        {
-                            Line line = new Line()
-                            {
-                                LineNumber = lineNumber,
-                                FromZero = flatten.FromZero
-                            };
-                            lines.Add(lineNumber, line);
-                        }
-
+                    {
                         if (property.PropertyType.GetCustomAttribute(typeof(Formatted)) != null)
                         {
-                            lines[lineNumber].SortedLines = GetSortedLines(property.GetValue(objectToFlatten));
+                            lines[flat.Line] = lines[flat.Line] + GetFlattenedString(GetSortedLines(property.GetValue(objectToFlatten)));
                         }
                         else if (property.PropertyType.IsGenericType && typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
                         {
-                            IEnumerable? items = (IEnumerable) property.GetValue(objectToFlatten);                            
-                            foreach(var item in items)
+                            IEnumerable? items = (IEnumerable)property.GetValue(objectToFlatten);
+                            int lineCounter = 1;
+                            foreach (var item in items)
                             {
-                                int startingPosition = (lines[lineNumber].SortedLines.Keys.Count > 0 ? lines[lineNumber].SortedLines.Keys.Max() : 0);
-                                foreach (KeyValuePair<int, Line> entry in GetSortedLines(item))
-                                {                                    
-                                    lines[lineNumber].SortedLines.Add(startingPosition + entry.Key, entry.Value);
-                                }
-                            }                            
+                                if (lineCounter > 1) lines[flat.Line] = lines[flat.Line] + Environment.NewLine;
+                                lines[flat.Line] = lines[flat.Line] + GetFlattenedString(GetSortedLines(item));
+                                lineCounter++;
+                            }
                         }
                         else
                         {
-                            string formattedString = FormatString(property.GetValue(objectToFlatten).ToString(), flat);
-                            int offSet = flat.Offset == 0 && !flatten.FromZero ? 1 : flat.Offset;
-                            lines[lineNumber].AddFormattedString(offSet, formattedString);
-                        }                        
+                            if ((flat.Offset - offsetAdjustment) > lines[flat.Line].Length)
+                            {
+                                throw new Exceptions.FlattenerException(string.Format("Next offest expected at {0}, but {1} specified.", lines[flat.Line].Length, (flat.Offset - offsetAdjustment)));
+                            }
+                            else if ((flat.Offset - offsetAdjustment) < lines[flat.Line].Length)
+                            {
+                                throw new Exceptions.FlattenerException(string.Format("Offest {0} specified, but {1} expected.", (flat.Offset - offsetAdjustment), lines[flat.Line].Length));
+                            }
+                            else
+                            {
+                                lines[flat.Line] = lines[flat.Line] + FormatString(property.GetValue(objectToFlatten).ToString(), flat);
+                            }
+                        }
                     }
-
-                                  
                 }
             }
             return lines;
@@ -121,17 +83,19 @@ namespace Formatter
         private string FormatString(string value, Format format)
         {
             string formattedString = string.Empty;
-            if(value.Length < format.Length)
+            if (value.Length < format.Length)
             {
                 char fill = format.Fill.Length > 0 ? format.Fill[0] : ' ';
                 if (format.Justified == Constants.Justified.RIGHT)
                 {
                     formattedString = value.PadLeft(format.Length, fill);
-                } else
+                }
+                else
                 {
-                    formattedString = value.PadRight(format.Length, fill);                    
-                }                
-            } else
+                    formattedString = value.PadRight(format.Length, fill);
+                }
+            }
+            else
             {
                 if (format.Justified == Constants.Justified.RIGHT)
                 {
@@ -142,10 +106,11 @@ namespace Formatter
                     formattedString = value.Substring(0, format.Length);
                 }
             }
-            if(format.Case == Constants.Case.UPPER)
+            if (format.Case == Constants.Case.UPPER)
             {
                 formattedString = formattedString.ToUpper();
-            } else if (format.Case == Constants.Case.LOWER)
+            }
+            else if (format.Case == Constants.Case.LOWER)
             {
                 formattedString = formattedString.ToLower();
             }
