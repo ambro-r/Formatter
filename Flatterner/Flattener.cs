@@ -1,4 +1,5 @@
 ﻿using Formatter.Attributes;
+using Formatter.Helper;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace Formatter
             return GetFlattenedString(GetSortedLines(objectToFlatten));
         }
 
+        //TODO: Need to cater for "skipped" line numbers (i.e. 01 - Text, 02 - Blank, 03 - Text)
         private string GetFlattenedString(SortedDictionary<int, string> lines)
         {
             string flattenedString = string.Empty;
@@ -37,18 +39,18 @@ namespace Formatter
             int offsetAdjustment = flatten.FromZero ? 0 : 1;
             if (flatten != null)
             {
-                IOrderedEnumerable<PropertyInfo> properties = type.GetProperties().Where(p => ((Format)p.GetCustomAttribute(typeof(Format), false))?.Line > 0).OrderBy(p => ((Format)p.GetCustomAttribute(typeof(Format), false))?.Line).ThenBy(p => ((Format)p.GetCustomAttribute(typeof(Format), false))?.Offset);
+                IOrderedEnumerable<PropertyInfo> properties = FormatHelper.GetOrderedFormats(type);
                 foreach (PropertyInfo property in properties)
                 {
-                    Format flat = (Format)property.GetCustomAttribute(typeof(Format), false);
+                    Format flat = FormatHelper.GetFormat(property);
                     if (!lines.ContainsKey(flat.Line)) lines.Add(flat.Line, string.Empty);
                     if (flat != null)
                     {
-                        if (property.PropertyType.GetCustomAttribute(typeof(Formatted)) != null)
+                        if (FormatHelper.isFormattedType(property))
                         {
                             lines[flat.Line] = lines[flat.Line] + GetFlattenedString(GetSortedLines(property.GetValue(objectToFlatten)));
                         }
-                        else if (property.PropertyType.IsGenericType && typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
+                        else if (FormatHelper.isIEnumerable(property))
                         {
                             IEnumerable? items = (IEnumerable)property.GetValue(objectToFlatten);
                             int lineCounter = 1;
