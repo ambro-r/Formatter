@@ -1,12 +1,13 @@
 # Formatter
 A small library to work with pre-formatted / fixed length strings. This is especially useful in the following cases:
 
-* When submitting fixed length flat-files to legacy systems. 
-* When receiving a fixed length flat-file from a legacy syste
+* When submitting fixed length flat-file(s) to a legacy system(s). 
+* When receiving fixed length flat-file(s) from a legacy system(s).
 
-**NOTE:** 
+**TO DO / NOTE:** 
 
-* Currently on generation of the fixed length file is supported, reading a fixed-length into an object is not (to do) 
+* Limited support for reading of fixed length strings (no support for lists).
+* Need to add support for "skipped" lines. (i.e ``[Format(Line = 3)]``, without ``[Format(Line = 2)]``).
 
 
 ### Usage:
@@ -78,10 +79,11 @@ public class Person
 
 	public int Age { get; set; }	
 
+	[Format(Line = 2)]
 	public ContactDetails ContactDetails { get; set; }		
 }
 
-[Formatted(FromZero = true, Line = 3)]
+[Formatted(FromZero = true)]
 public class ContactDetails
 {
 	[Format(Offset = 0, Length = 25)]
@@ -95,6 +97,5 @@ public class ContactDetails
 This will produce something like this:
 ```	
 John                Simple              000000000A123-SIMPLE
-
 my.email@simpleperson.com   +88-123-1234
 ```	
