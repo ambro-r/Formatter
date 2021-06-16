@@ -16,21 +16,46 @@ namespace Formatter
 
         public U Expand<U>(U expand, string flatString)
         {
+            int lineNumber = 0;
+            return Expand(expand, GetLines(flatString), ref lineNumber);
+        }
+
+        private U Expand<U>(U expand, string[] lines, ref int lineNumber)
+        {
+            int internalLineCounter = 0; 
             Type type = expand.GetType();
             Formatted flatten = (Formatted)type.GetCustomAttribute(typeof(Formatted));
+        
             int offsetAdjustment = flatten.FromZero ? 0 : 1;
             if (flatten != null)
-            {
+            {          
                 IOrderedEnumerable<PropertyInfo> properties = FormatHelper.GetOrderedFormats(type);
                 foreach (PropertyInfo property in properties)
                 {
-                    Format format = FormatHelper.GetFormat(property);
-                    string piece = GetPiece(format, flatString, offsetAdjustment);
-                    property.SetValue(expand, Convert.ChangeType(piece, property.PropertyType), null);
+                    if (FormatHelper.isFormattedType(property))
+                    {
+                        lineNumber++;
+                        property.SetValue(expand, Expand(Activator.CreateInstance(property.PropertyType), lines, ref lineNumber), null);                        
+                    }
+                    else
+                    {
+                        Format format = FormatHelper.GetFormat(property);
+                        string piece = GetPiece(format, lines[lineNumber], offsetAdjustment);
+                        if (property.CanWrite)
+                        {
+                            property.SetValue(expand, Convert.ChangeType(piece, property.PropertyType), null);
+                        }
+                    }
                 }
 
             }
             return expand;
+        }
+
+        private string[] GetLines(string flatString)
+        {
+            string[] lines = flatString.Split(new[] { "\r\n", "\r", "\n", Environment.NewLine }, StringSplitOptions.None);
+            return lines;
         }
 
         private string GetPiece(Format format, string flatString, int offsetAdjustment)

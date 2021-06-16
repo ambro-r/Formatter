@@ -19,6 +19,7 @@ namespace Formatter
             return GetFlattenedString(GetSortedLines(objectToFlatten));
         }
 
+        //TODO: Need to cater for "skipped" line numbers (i.e. 01 - Text, 02 - Blank, 03 - Text)
         private string GetFlattenedString(SortedDictionary<int, string> lines)
         {
             string flattenedString = string.Empty;
