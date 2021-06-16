@@ -35,7 +35,11 @@ namespace Formatter
                     if (FormatHelper.isFormattedType(property))
                     {
                         lineNumber++;
-                        property.SetValue(expand, Expand(Activator.CreateInstance(property.PropertyType), lines, ref lineNumber), null);                        
+                        property.SetValue(expand, Expand(Activator.CreateInstance(property.PropertyType), lines, ref lineNumber), null);
+                    }
+                    else if (FormatHelper.isIEnumerable(property))
+                    {
+                        // TODO: Support for IEnumerable                       
                     }
                     else
                     {

@@ -1,5 +1,6 @@
 ﻿using Formatter.Attributes;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -18,11 +19,14 @@ namespace Formatter.Helper
         {
             return (Format)property.GetCustomAttribute(typeof(Format), false);
         }
-
         public static bool isFormattedType(PropertyInfo property)
         {
             return property.PropertyType.GetCustomAttribute(typeof(Formatted)) != null;
         }
 
+        public static bool isIEnumerable(PropertyInfo property)
+        {
+            return property.PropertyType.IsGenericType && typeof(IEnumerable).IsAssignableFrom(property.PropertyType);
+        }
     }
 }

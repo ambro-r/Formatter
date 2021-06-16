@@ -50,7 +50,7 @@ namespace Formatter
                         {
                             lines[flat.Line] = lines[flat.Line] + GetFlattenedString(GetSortedLines(property.GetValue(objectToFlatten)));
                         }
-                        else if (property.PropertyType.IsGenericType && typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
+                        else if (FormatHelper.isIEnumerable(property))
                         {
                             IEnumerable? items = (IEnumerable)property.GetValue(objectToFlatten);
                             int lineCounter = 1;
