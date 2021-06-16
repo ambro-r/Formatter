@@ -1,25 +1,16 @@
-﻿using Flattener.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Formatter.Attributes;
 
 namespace Sample.Models
 {
-    [Formatted(FromZero = true, Line = 1)]
+    [Formatted(FromZero = true)]
     public class IncorrectLines
     {
-        [Format(Offset = 0, Length = 25)]
-        public string Offset01 { get; set; }
+        [Format(Line = 1, Offset = 0, Length = 25)]
+        public string Line01 { get; set; } = "Line 01";
 
-        public Line02 Line02 { get; set; }
+        [Format(Line = 1)]
+        public string DuplicateLine01 { get; set; } = "Duplicate Line 01";
 
-    }
-
-    [Formatted(FromZero = true, Line = 1)]
-    public class Line02
-    {
-        [Format(Offset = 0, Length = 25)]
-        public string Offset01 { get; set; }
     }
 
 }
